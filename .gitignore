@@ -1,5 +1,12 @@
+*.sdf
+*.sln
+*.suo
+bin/
+bin64/
 vs.proj/Debug
 vs.proj/Release
 vs.proj/x64
 vs.proj/NppPluginTemplate.opensdf
-*.sdf
+vs.proj/NppPluginTemplate.exp
+vs.proj/NppPluginTemplate.lib
+vs.proj/NppPluginTemplate.vcxproj.user
