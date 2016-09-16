@@ -10,3 +10,5 @@ vs.proj/NppPluginTemplate.opensdf
 vs.proj/NppPluginTemplate.exp
 vs.proj/NppPluginTemplate.lib
 vs.proj/NppPluginTemplate.vcxproj.user
+*.aps
+*.zip
