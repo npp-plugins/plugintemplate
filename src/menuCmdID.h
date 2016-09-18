@@ -109,6 +109,12 @@
     #define    IDM_EDIT_LINE_DOWN                   (IDM_EDIT + 15)
     #define    IDM_EDIT_UPPERCASE                   (IDM_EDIT + 16)
     #define    IDM_EDIT_LOWERCASE                   (IDM_EDIT + 17)
+    #define    IDM_EDIT_PROPERCASE_FORCE            (IDM_EDIT + 67)
+    #define    IDM_EDIT_PROPERCASE_BLEND            (IDM_EDIT + 68)
+    #define    IDM_EDIT_SENTENCECASE_FORCE          (IDM_EDIT + 69)
+    #define    IDM_EDIT_SENTENCECASE_BLEND          (IDM_EDIT + 70)
+    #define    IDM_EDIT_INVERTCASE                  (IDM_EDIT + 71)
+    #define    IDM_EDIT_RANDOMCASE                  (IDM_EDIT + 72)
     #define    IDM_EDIT_REMOVEEMPTYLINES            (IDM_EDIT + 55)
     #define    IDM_EDIT_REMOVEEMPTYLINESWITHBLANK   (IDM_EDIT + 56)
     #define    IDM_EDIT_BLANKLINEABOVECURRENT       (IDM_EDIT + 57)
@@ -121,6 +127,11 @@
 	#define    IDM_EDIT_SORTLINES_DECIMALCOMMA_DESCENDING	(IDM_EDIT + 64)
 	#define    IDM_EDIT_SORTLINES_DECIMALDOT_ASCENDING		(IDM_EDIT + 65)
 	#define    IDM_EDIT_SORTLINES_DECIMALDOT_DESCENDING		(IDM_EDIT + 66)
+
+	#define    IDM_EDIT_OPENASFILE                   (IDM_EDIT + 73)
+	#define    IDM_EDIT_OPENINFOLDER                 (IDM_EDIT + 74)
+	#define    IDM_EDIT_SEARCHONINTERNET             (IDM_EDIT + 75)
+	#define    IDM_EDIT_CHANGESEARCHENGINE           (IDM_EDIT + 76)
 
 // Menu macro
     #define    IDM_MACRO_STARTRECORDINGMACRO        (IDM_EDIT + 18)
@@ -334,6 +345,8 @@
 	#define	   IDM_VIEW_TAB_NEXT				  (IDM_VIEW + 95)
 	#define	   IDM_VIEW_TAB_PREV				  (IDM_VIEW + 96)
     #define    IDM_VIEW_MONITORING                (IDM_VIEW + 97)
+	#define	   IDM_VIEW_TAB_MOVEFORWARD			  (IDM_VIEW + 98)
+	#define	   IDM_VIEW_TAB_MOVEBACKWARD		  (IDM_VIEW + 99)
 
     #define    IDM_VIEW_GOTO_ANOTHER_VIEW        10001
     #define    IDM_VIEW_CLONE_TO_ANOTHER_VIEW    10002
