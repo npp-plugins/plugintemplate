@@ -24,58 +24,33 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-#pragma once
-#include "../Notepad_plus_msgs.h"
-#include "Window.h"
 
-typedef HRESULT (WINAPI * ETDTProc) (HWND, DWORD);
+#include "StaticDialog.h"
 
-enum class PosAlign { left, right, top, bottom };
+#include "Common.h"
 
-struct DLGTEMPLATEEX
+//reduced original N++ version to the really used function
+//to avoid compilation issues
+
+generic_string GetLastErrorAsString(DWORD errorCode)
 {
-      WORD   dlgVer;
-      WORD   signature;
-      DWORD  helpID;
-      DWORD  exStyle;
-      DWORD  style;
-      WORD   cDlgItems;
-      short  x;
-      short  y;
-      short  cx;
-      short  cy;
-      // The structure has more fields but are variable length
-};
+	generic_string errorMsg(_T(""));
+	// Get the error message, if any.
+	// If both error codes (passed error n GetLastError) are 0, then return empty
+	if (errorCode == 0)
+		errorCode = GetLastError();
+	if (errorCode == 0)
+		return errorMsg; //No error message has been recorded
 
-class StaticDialog : public Window
-{
-public :
-	virtual ~StaticDialog();
+	LPWSTR messageBuffer = nullptr;
+	FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&messageBuffer, 0, nullptr);
 
-	virtual void create(int dialogID, bool isRTL = false, bool msgDestParent = true);
+	errorMsg += messageBuffer;
 
-    virtual bool isCreated() const {
-		return (_hSelf != NULL);
-	}
+	//Free the buffer.
+	LocalFree(messageBuffer);
 
-	void goToCenter();
+	return errorMsg;
+}
 
-	void display(bool toShow = true) const;
-
-	POINT getTopPoint(HWND hwnd, bool isLeft = true) const;
-
-	bool isCheckedOrNot(int checkControlID) const
-	{
-		return (BST_CHECKED == ::SendMessage(::GetDlgItem(_hSelf, checkControlID), BM_GETCHECK, 0, 0));
-	}
-
-    virtual void destroy() override;
-
-protected:
-	RECT _rc;
-	static INT_PTR CALLBACK dlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-	virtual INT_PTR CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam) = 0;
-
-    void alignWith(HWND handle, HWND handle2Align, PosAlign pos, POINT & point);
-	HGLOBAL makeRTLResource(int dialogID, DLGTEMPLATE **ppMyDlgTemplate);
-};
