@@ -4,11 +4,12 @@ image: Visual Studio 2017
 
 environment:
   matrix:
-  - PlatformToolset: v141_xp
+  - PlatformToolset: v141
 
 platform:
     - x64
     - Win32
+    - arm64
 
 configuration:
     - Release
@@ -21,7 +22,10 @@ install:
     - if "%platform%"=="Win32" set archi=x86
     - if "%platform%"=="Win32" set platform_input=Win32
 
-    - if "%PlatformToolset%"=="v141_xp" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
+    - if "%platform%"=="arm64" set archi=amd64_arm64
+    - if "%platform%"=="arm64" set platform_input=arm64
+
+    - if "%PlatformToolset%"=="v141" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
     - if "%PlatformToolset%"=="v142" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
 
 build_script:
@@ -40,7 +44,11 @@ after_build:
             Push-AppveyorArtifact "bin\NppPluginTemplate.dll" -FileName NppPluginTemplate.dll
         }
 
-        if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "v141_xp") {
+        if ($env:PLATFORM_INPUT -eq "arm64" -and $env:CONFIGURATION -eq "Release") {
+            Push-AppveyorArtifact "arm64\NppPluginTemplate.dll" -FileName NppPluginTemplate.dll
+        }
+
+        if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "v141") {
             if($env:PLATFORM_INPUT -eq "x64"){
                 $ZipFileName = "NppPluginTemplate_$($env:APPVEYOR_REPO_TAG_NAME)_x64.zip"
                 Remove-Item bin64\*.ipdb
@@ -52,6 +60,12 @@ after_build:
                 Remove-Item bin\*.ipdb
                 Remove-Item bin\*.iobj
                 7z a $ZipFileName "$($env:APPVEYOR_BUILD_FOLDER)\bin\*"
+            }
+            if($env:PLATFORM_INPUT -eq "arm64"){
+                $ZipFileName = "NppPluginTemplate_$($env:APPVEYOR_REPO_TAG_NAME)_arm64.zip"
+                Remove-Item bin64\*.ipdb
+                Remove-Item bin64\*.iobj
+                7z a $ZipFileName "$($env:APPVEYOR_BUILD_FOLDER)\arm64\*"
             }
         }
 
@@ -69,5 +83,5 @@ deploy:
     force_update: true
     on:
         appveyor_repo_tag: true
-        PlatformToolset: v141_xp
+        PlatformToolset: v141
         configuration: Release
