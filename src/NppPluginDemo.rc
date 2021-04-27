@@ -19,8 +19,8 @@
 
 #include <windows.h>
 
-#define VERSION_VALUE "3.1\0"
-#define VERSION_DIGITALVALUE 3, 1, 0, 0
+#define VERSION_VALUE "4.0\0"
+#define VERSION_DIGITALVALUE 4, 0, 0, 0
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION	VERSION_DIGITALVALUE
@@ -43,7 +43,7 @@ BEGIN
 			VALUE	"FileDescription",	"Plugin template for Notepad++\0"
 			VALUE	"FileVersion",	VERSION_VALUE
 			VALUE	"InternalName",	"NppPluginTemplate.dll\0"
-			VALUE	"LegalCopyright",	"Copyright 2016 by Don HO\0"
+			VALUE	"LegalCopyright",	"Copyright 2021 by Don HO\0"
 			VALUE	"OriginalFilename",	"NppPluginTemplate.dll\0"
 			VALUE	"ProductName",	"NppPluginTemplate\0"
 			VALUE	"ProductVersion",	VERSION_VALUE
