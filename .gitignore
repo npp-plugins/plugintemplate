@@ -3,12 +3,15 @@
 *.suo
 bin/
 bin64/
+arm64/
 vs.proj/Debug
 vs.proj/Release
 vs.proj/x64
+vs.proj/ARM64
 vs.proj/NppPluginTemplate.opensdf
 vs.proj/NppPluginTemplate.exp
 vs.proj/NppPluginTemplate.lib
 vs.proj/NppPluginTemplate.vcxproj.user
+vs.proj/.vs/
 *.aps
 *.zip

@@ -1,24 +1,23 @@
-/*
-this file is part of Function List Plugin for Notepad++
-Copyright (C)2005 Jens Lorenz <jens.plugin.npp@gmx.de>
+// This file is part of Notepad++ project
+// Copyright (C)2021 Don HO <don.h@free.fr>
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either
-version 2 of the License, or (at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// at your option any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*/
+#pragma once
 
-#ifndef DOCKING_H
-#define DOCKING_H
+#include <windows.h>
 
 // ATTENTION : It's a part of interface header, so don't include the others header here
 
@@ -49,13 +48,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 typedef struct {
 	HWND		hClient;		// client Window Handle
-	TCHAR		*pszName;		// name of plugin (shown in window)
+	const TCHAR	*pszName;		// name of plugin (shown in window)
 	int			dlgID;			// a funcItem provides the function pointer to start a dialog. Please parse here these ID
 
 	// user modifications
 	UINT		uMask;			// mask params: look to above defines
 	HICON		hIconTab;		// icon for tabs
-	TCHAR		*pszAddInfo;		// for plugin to display additional informations
+	const TCHAR *pszAddInfo;		// for plugin to display additional informations
 
 	// internal data, do not use !!!
 	RECT		rcFloat;		// floating position
@@ -73,5 +72,3 @@ typedef struct {
 #define	HIT_TEST_THICKNESS		20
 #define SPLITTER_WIDTH			4
 
-
-#endif // DOCKING_H
