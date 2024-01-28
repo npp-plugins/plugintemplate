@@ -26,10 +26,11 @@ Just follow the 4 steps (commented) in both PluginDefinition.h and PluginDefinit
 //----------------------------------------------//	
 
 Any questions and suggestions please post here :
-https://notepad-plus-plus.org/community/category/5/plugin-development
+https://community.notepad-plus-plus.org/category/5/notepad-plugin-development
 
 For more information about plugin development, please check here:
 https://npp-user-manual.org/docs/plugins/#how-to-develop-a-plugin
+https://npp-user-manual.org/docs/plugin-communication/
 
 
 Don HO
