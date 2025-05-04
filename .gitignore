@@ -8,6 +8,7 @@ vs.proj/Debug
 vs.proj/Release
 vs.proj/x64
 vs.proj/ARM64
+vs.proj/NppPlugi.*
 vs.proj/NppPluginTemplate.opensdf
 vs.proj/NppPluginTemplate.exp
 vs.proj/NppPluginTemplate.lib
