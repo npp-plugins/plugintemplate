@@ -15,15 +15,9 @@ jobs:
     if: ${{ github.repository_name == 'notepad-plus-plus/plugintemplate' }}
 
     permissions:
-      packages: write
       contents: write
 
     runs-on: windows-latest
-    strategy:
-      max-parallel: 6
-      matrix:
-        build_configuration: [Release]
-        build_platform: [x64]
 
     steps:
     - name: Checkout plugintemplate repo
@@ -34,6 +28,7 @@ jobs:
       with:
         repository: notepad-plus-plus/notepad-plus-plus
         path: npp_repo
+        filter: 'blob:none'
 
     - name: Diff the hashes
       id: diff_step
@@ -71,6 +66,7 @@ jobs:
         $dateNow = (Get-Date).ToString("yyyy_MMMM_dd")
         echo "CHANGE DATE will be $dateNow"
         "CHANGE_DATE=$dateNow" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "HEAD_REF=$(git --git-dir=npp_repo/.git describe --always '@')" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         #
         # get rid of the extra hierarchy now that the hash
         Remove-Item .\npp_repo -Force -Recurse -ErrorAction SilentlyContinue
@@ -79,24 +75,29 @@ jobs:
 
     - name: If ANY_DIFFERENCE then add MSBuild to PATH
       if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
 
     - name: If ANY_DIFFERENCE then run MSBuild of plugin dll
       if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
       working-directory: vs.proj\
-      run: msbuild NppPluginTemplate.vcxproj /m /p:configuration="${{ matrix.build_configuration }}" /p:platform="${{ matrix.build_platform }}"
+      run: |
+        foreach ($target in ('Win32', 'x64', 'ARM64'))
+        {
+            msbuild NppPluginTemplate.vcxproj /m /p:configuration=Release /p:platform="$target"
+        }
 
     - name: Commit any updates to the repo
       if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
-        commit_message: Updating plugintemplate based on most recent N++ repo (${{ steps.diff_step.outputs.CHANGE_DATE }})
+        # GitHub will auto-link the upstream ref to the corresponding commit
+        commit_message: Sync template with notepad-plus-plus/notepad-plus-plus@${{ steps.diff_step.outputs.HEAD_REF }}
 
     - name: Release
       if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
-      uses: elgohr/Github-Release-Action@v5
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
-        title: Plugin Template for Notepad++ release v${{ steps.diff_step.outputs.CHANGE_DATE }}.${{github.run_number}}.${{github.run_attempt}}
-        tag: v${{ steps.diff_step.outputs.CHANGE_DATE }}.${{github.run_number}}.${{github.run_attempt}}
+        name: Plugin Template for Notepad++ release v${{ steps.diff_step.outputs.CHANGE_DATE }}.${{github.run_number}}.${{github.run_attempt}}
+        tag_name: v${{ steps.diff_step.outputs.CHANGE_DATE }}.${{github.run_number}}.${{github.run_attempt}}
+        target_commitish: ${{ github.ref_name }}
+        token: ${{ secrets.GITHUB_TOKEN }}
