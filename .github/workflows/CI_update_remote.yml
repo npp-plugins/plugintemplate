@@ -12,7 +12,7 @@ jobs:
   update:
     # This job would annoy people who fork the template, or if plugintemplate ever becomes a "template repository"
     #   if someone _wants_ this, change the name to match their own fork or project
-    if: ${{ github.repository_name == 'notepad-plus-plus/plugintemplate' }}
+    if: ${{ github.repository_name == 'npp-plugins/plugintemplate' }}
 
     permissions:
       contents: write
