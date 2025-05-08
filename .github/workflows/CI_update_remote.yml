@@ -6,7 +6,7 @@ on:
 
   # on schedule (using cron syntax)
   schedule:
-    - cron: "0 0 1 * *" #< first day of every month at 00:00 UTC
+    - cron: "0 0 * * *" #< every day at 00:00 UTC
 
 jobs:
   update:
@@ -71,9 +71,12 @@ jobs:
             $upstream_path = $pairs[$local_path]
             $local_hash = Get-FileHash $local_path -Algorithm SHA256 | Select-Object -ExpandProperty Hash
             $upstream_hash = Get-FileHash $upstream_path -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+            Write-Output "$local_hash :: hash($local_path)"
+            Write-Output "$upstream_hash :: hash($upstream_path)"
             if ($local_hash -ne $upstream_hash) {
                 $anyDifference = $true
                 Copy-Item -Path $upstream_path -destination $local_path -Force
+                Write-Output "hashes differed, so copied file"
             }
         }
         #
@@ -93,6 +96,12 @@ jobs:
         #
         git status
 
+    - name: Commit any updates to the repo
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        # GitHub will auto-link the upstream ref to the corresponding commit
+        commit_message: Sync template with notepad-plus-plus/notepad-plus-plus@${{ steps.diff_step.outputs.HEAD_REF }}
+
     - name: If ANY_DIFFERENCE then add MSBuild to PATH
       if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
       uses: microsoft/setup-msbuild@v2
@@ -105,13 +114,6 @@ jobs:
         {
             msbuild NppPluginTemplate.vcxproj /m /p:configuration=Release /p:platform="$target"
         }
-
-    - name: Commit any updates to the repo
-      if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        # GitHub will auto-link the upstream ref to the corresponding commit
-        commit_message: Sync template with notepad-plus-plus/notepad-plus-plus@${{ steps.diff_step.outputs.HEAD_REF }}
 
     - name: Release
       if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
