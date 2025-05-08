@@ -36,25 +36,39 @@ jobs:
         # start assuming no differences
         $anyDifference = $false
         #
-        # scintilla hashes: for plugintemplate (hps) and npp (hns)
+        # Define the local_path => upstream_path pairs
         #
-        $fps = "src\Scintilla.h"
-        $fns = "npp_repo\scintilla\include\Scintilla.h"
-        $hps = Get-FileHash $fps -Algorithm SHA256 | Select-Object -ExpandProperty Hash
-        $hns = Get-FileHash $fns -Algorithm SHA256 | Select-Object -ExpandProperty Hash
-        if ($hps -ne $hns) {
-            $anyDifference = $true
-            Copy-Item -path $fns -destination $fps -force
+        $pairs = @{
+            "src\Scintilla.h" = "npp_repo\scintilla\include\Scintilla.h",
+            "src\Sci_Position.h" = "npp_repo\scintilla\include\Sci_Position.h",
+            "src\Notepad_plus_msgs.h" = "npp_repo\PowerEditor\src\MISC\PluginsManager\Notepad_plus_msgs.h"
+            "src\PluginInterface.h" = "npp_repo\PowerEditor\src\MISC\PluginsManager\PluginInterface.h"
+            "src\menuCmdID.h" = "npp_repo\PowerEditor\src\menuCmdID.h",
+            "src\DockingFeature\Docking.h" = "npp_repo\PowerEditor\src\WinControls\DockingWnd\Docking.h",
+            "src\DockingFeature\dockingResource.h" = "npp_repo\PowerEditor\src\WinControls\DockingWnd\dockingResource.h"
+            ##
+            ### The following might be useful to plugin developers, but may require changes to make them compatible
+            ###     as such, they are listed for reference, but not included as part of the automatic update
+            ###     of the template
+            ##
+            #"src\DockingFeature\DockingDlgInterface.h" = "npp_repo\PowerEditor\src\WinControls\DockingWnd\DockingDlgInterface.h",
+            #"src\DockingFeature\StaticDialog.h" = "npp_repo\PowerEditor\src\WinControls\StaticDialog\StaticDialog.h",
+            #"src\DockingFeature\StaticDialog.cpp" = "npp_repo\PowerEditor\src\WinControls\StaticDialog\StaticDialog.cpp",
+            #"src\DockingFeature\Window.h" = "npp_repo\PowerEditor\src\WinControls\Window.h",
+            #"src\DockingFeature\GoToLineDlg.cpp" = "npp_repo\PowerEditor\src\ScintillaComponent\GoToLineDlg.cpp",
+            #"src\DockingFeature\GoToLineDlg.h" = "npp_repo\PowerEditor\src\ScintillaComponent\GoToLineDlg.h",
         }
         #
-        # Notepad_plus_msgs.h hashes: for plugintemplate (hpn) and npp (hnn)
-        $fpn = "src\Notepad_plus_msgs.h"
-        $fnn = "npp_repo\PowerEditor\src\MISC\PluginsManager\Notepad_plus_msgs.h"
-        $hpn = Get-FileHash $fpn -Algorithm SHA256 | Select-Object -ExpandProperty Hash
-        $hnn = Get-FileHash $fnn -Algorithm SHA256 | Select-Object -ExpandProperty Hash
-        if ($hpn -ne $hnn) {
-            $anyDifference = $true
-            Copy-Item -path $fnn -destination $fpn -force
+        # loop over each pair, calculate hash of each, and copy any files that are different
+        #
+        ForEach ($local_path in $pairs.Keys) {
+            $upstream_path = $pairs[$local_path]
+            $local_hash = Get-FileHash $local_path -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+            $upstream_hash = Get-FileHash $upstream_path -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+            if ($local_hash -ne $upstream_hash) {
+                $anyDifference = $true
+                Copy-Item -Path $upstream_path -destination $local_path -Force
+            }
         }
         #
         # use  GITHUB_OUTPUT to propagate a value that will be able to control the conditional on a future step
@@ -62,13 +76,13 @@ jobs:
             "ANY_DIFFERENCE=True" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         }
         #
-        # Store the date:
+        # Store the date and head reference for use in subsequent steps
         $dateNow = (Get-Date).ToString("yyyy_MMMM_dd")
         echo "CHANGE DATE will be $dateNow"
         "CHANGE_DATE=$dateNow" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         "HEAD_REF=$(git --git-dir=npp_repo/.git describe --always '@')" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         #
-        # get rid of the extra hierarchy now that the hash
+        # get rid of the extra hierarchy now that everything necessary has been copied
         Remove-Item .\npp_repo -Force -Recurse -ErrorAction SilentlyContinue
         #
         git status
