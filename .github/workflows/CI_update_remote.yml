@@ -36,6 +36,12 @@ jobs:
         # start assuming no differences
         $anyDifference = $false
         #
+        #### Always trigger build on workflow_dispatch
+        #
+        if("${{ github.event_name }}" -eq "workflow_dispatch") {
+            $anyDifference = $true
+        }
+        #
         # Define the local_path => upstream_path pairs
         #
         $pairs = @{
