@@ -39,24 +39,24 @@ jobs:
         # Define the local_path => upstream_path pairs
         #
         $pairs = @{
-            "src\Scintilla.h" = "npp_repo\scintilla\include\Scintilla.h",
-            "src\Sci_Position.h" = "npp_repo\scintilla\include\Sci_Position.h",
-            "src\Notepad_plus_msgs.h" = "npp_repo\PowerEditor\src\MISC\PluginsManager\Notepad_plus_msgs.h"
-            "src\PluginInterface.h" = "npp_repo\PowerEditor\src\MISC\PluginsManager\PluginInterface.h"
-            "src\menuCmdID.h" = "npp_repo\PowerEditor\src\menuCmdID.h",
-            "src\DockingFeature\Docking.h" = "npp_repo\PowerEditor\src\WinControls\DockingWnd\Docking.h",
-            "src\DockingFeature\dockingResource.h" = "npp_repo\PowerEditor\src\WinControls\DockingWnd\dockingResource.h"
+            "src\\Scintilla.h" = "npp_repo\\scintilla\\include\\Scintilla.h"
+            "src\\Sci_Position.h" = "npp_repo\\scintilla\\include\\Sci_Position.h"
+            "src\\Notepad_plus_msgs.h" = "npp_repo\\PowerEditor\\src\\MISC\\PluginsManager\\Notepad_plus_msgs.h"
+            "src\\PluginInterface.h" = "npp_repo\\PowerEditor\\src\\MISC\\PluginsManager\\PluginInterface.h"
+            "src\\menuCmdID.h" = "npp_repo\\PowerEditor\\src\\menuCmdID.h"
+            "src\\DockingFeature\\Docking.h" = "npp_repo\\PowerEditor\\src\\WinControls\\DockingWnd\\Docking.h"
+            "src\\DockingFeature\\dockingResource.h" = "npp_repo\\PowerEditor\\src\\WinControls\\DockingWnd\\dockingResource.h"
             ##
             ### The following might be useful to plugin developers, but may require changes to make them compatible
             ###     as such, they are listed for reference, but not included as part of the automatic update
             ###     of the template
             ##
-            #"src\DockingFeature\DockingDlgInterface.h" = "npp_repo\PowerEditor\src\WinControls\DockingWnd\DockingDlgInterface.h",
-            #"src\DockingFeature\StaticDialog.h" = "npp_repo\PowerEditor\src\WinControls\StaticDialog\StaticDialog.h",
-            #"src\DockingFeature\StaticDialog.cpp" = "npp_repo\PowerEditor\src\WinControls\StaticDialog\StaticDialog.cpp",
-            #"src\DockingFeature\Window.h" = "npp_repo\PowerEditor\src\WinControls\Window.h",
-            #"src\DockingFeature\GoToLineDlg.cpp" = "npp_repo\PowerEditor\src\ScintillaComponent\GoToLineDlg.cpp",
-            #"src\DockingFeature\GoToLineDlg.h" = "npp_repo\PowerEditor\src\ScintillaComponent\GoToLineDlg.h",
+            #"src\\DockingFeature\\DockingDlgInterface.h" = "npp_repo\\PowerEditor\\src\\WinControls\\DockingWnd\\DockingDlgInterface.h"
+            #"src\\DockingFeature\\StaticDialog.h" = "npp_repo\\PowerEditor\\src\\WinControls\\StaticDialog\\StaticDialog.h"
+            #"src\\DockingFeature\\StaticDialog.cpp" = "npp_repo\\PowerEditor\\src\\WinControls\\StaticDialog\\StaticDialog.cpp"
+            #"src\\DockingFeature\\Window.h" = "npp_repo\\PowerEditor\\src\\WinControls\\Window.h"
+            #"src\\DockingFeature\\GoToLineDlg.cpp" = "npp_repo\\PowerEditor\\src\\ScintillaComponent\\GoToLineDlg.cpp"
+            #"src\\DockingFeature\\GoToLineDlg.h" = "npp_repo\\PowerEditor\\src\\ScintillaComponent\\GoToLineDlg.h"
         }
         #
         # loop over each pair, calculate hash of each, and copy any files that are different
