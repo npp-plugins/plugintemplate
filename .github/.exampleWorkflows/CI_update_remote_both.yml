@@ -1,0 +1,122 @@
+name: CI_update_remote_both
+
+on:
+  # on demand, from Actions tab
+  workflow_dispatch:
+
+  # on schedule (using cron syntax)
+  schedule:
+    - cron: "0 0 1 * *" #< on the first day of every month, at 00:00 UTC
+
+jobs:
+  update:
+    permissions:
+      contents: write
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout plugintemplate repo
+      uses: actions/checkout@v4
+
+    - name: Checkout N++ repo
+      uses: actions/checkout@v4
+      with:
+        repository: notepad-plus-plus/notepad-plus-plus
+        path: npp_repo
+        filter: 'blob:none'
+
+    - name: Diff the hashes
+      id: diff_step
+      run: |
+        # start assuming no differences
+        $anyDifference = $false
+        #
+        #### Always trigger build on workflow_dispatch
+        #
+        if("${{ github.event_name }}" -eq "workflow_dispatch") {
+            $anyDifference = $true
+        }
+        #
+        # Define the local_path => upstream_path pairs
+        #
+        $pairs = @{
+            "src\\Scintilla.h" = "npp_repo\\scintilla\\include\\Scintilla.h"
+            "src\\Sci_Position.h" = "npp_repo\\scintilla\\include\\Sci_Position.h"
+            "src\\Notepad_plus_msgs.h" = "npp_repo\\PowerEditor\\src\\MISC\\PluginsManager\\Notepad_plus_msgs.h"
+            "src\\PluginInterface.h" = "npp_repo\\PowerEditor\\src\\MISC\\PluginsManager\\PluginInterface.h"
+            "src\\menuCmdID.h" = "npp_repo\\PowerEditor\\src\\menuCmdID.h"
+            "src\\DockingFeature\\Docking.h" = "npp_repo\\PowerEditor\\src\\WinControls\\DockingWnd\\Docking.h"
+            "src\\DockingFeature\\dockingResource.h" = "npp_repo\\PowerEditor\\src\\WinControls\\DockingWnd\\dockingResource.h"
+            ##
+            ### The following might be useful to plugin developers, but may require changes to make them compatible
+            ###     as such, they are listed for reference, but not included as part of the automatic update
+            ###     of the template
+            ##
+            #"src\\DockingFeature\\DockingDlgInterface.h" = "npp_repo\\PowerEditor\\src\\WinControls\\DockingWnd\\DockingDlgInterface.h"
+            #"src\\DockingFeature\\StaticDialog.h" = "npp_repo\\PowerEditor\\src\\WinControls\\StaticDialog\\StaticDialog.h"
+            #"src\\DockingFeature\\StaticDialog.cpp" = "npp_repo\\PowerEditor\\src\\WinControls\\StaticDialog\\StaticDialog.cpp"
+            #"src\\DockingFeature\\Window.h" = "npp_repo\\PowerEditor\\src\\WinControls\\Window.h"
+            #"src\\DockingFeature\\GoToLineDlg.cpp" = "npp_repo\\PowerEditor\\src\\ScintillaComponent\\GoToLineDlg.cpp"
+            #"src\\DockingFeature\\GoToLineDlg.h" = "npp_repo\\PowerEditor\\src\\ScintillaComponent\\GoToLineDlg.h"
+        }
+        #
+        # loop over each pair, calculate hash of each, and copy any files that are different
+        #
+        ForEach ($local_path in $pairs.Keys) {
+            $upstream_path = $pairs[$local_path]
+            $local_hash = Get-FileHash $local_path -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+            $upstream_hash = Get-FileHash $upstream_path -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+            Write-Output "$local_hash :: hash($local_path)"
+            Write-Output "$upstream_hash :: hash($upstream_path)"
+            if ($local_hash -ne $upstream_hash) {
+                $anyDifference = $true
+                Copy-Item -Path $upstream_path -destination $local_path -Force
+                Write-Output "hashes differed, so copied file"
+            }
+        }
+        #
+        # use  GITHUB_OUTPUT to propagate a value that will be able to control the conditional on a future step
+        if ($anyDifference) {
+            "ANY_DIFFERENCE=True" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        }
+        #
+        # Store the date and head reference for use in subsequent steps
+        $dateNow = (Get-Date).ToString("yyyy_MMMM_dd")
+        echo "CHANGE DATE will be $dateNow"
+        "CHANGE_DATE=$dateNow" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "HEAD_REF=$(git --git-dir=npp_repo/.git describe --always '@')" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        #
+        # get rid of the extra hierarchy now that everything necessary has been copied
+        Remove-Item .\npp_repo -Force -Recurse -ErrorAction SilentlyContinue
+        #
+        git status
+
+    - name: If ANY_DIFFERENCE then add MSBuild to PATH
+      if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
+      uses: microsoft/setup-msbuild@v2
+
+    - name: If ANY_DIFFERENCE then run MSBuild of plugin dll
+      if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
+      working-directory: vs.proj\
+      run: |
+        foreach ($target in ('Win32', 'x64', 'ARM64'))
+        {
+            msbuild NppPluginTemplate.vcxproj /m /p:configuration=Release /p:platform="$target"
+        }
+
+    - name: Commit any updates to the repo
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        # GitHub will auto-link the upstream ref to the corresponding commit
+        commit_message: Sync template with notepad-plus-plus/notepad-plus-plus@${{ steps.diff_step.outputs.HEAD_REF }}
+
+    # un-comment the Release section if you want to trigger a release of your plugin based solely on the updates from Notepad++ repo
+    #- name: Release
+    #  if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
+    #  uses: softprops/action-gh-release@v2
+    #  with:
+    #    name: Plugin Template for Notepad++ release v${{ steps.diff_step.outputs.CHANGE_DATE }}.${{github.run_number}}.${{github.run_attempt}}
+    #    tag_name: v${{ steps.diff_step.outputs.CHANGE_DATE }}.${{github.run_number}}.${{github.run_attempt}}
+    #    target_commitish: ${{ github.ref_name }}
+    #    token: ${{ secrets.GITHUB_TOKEN }}
