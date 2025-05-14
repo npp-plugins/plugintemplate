@@ -4,9 +4,9 @@ on:
   # on demand, from Actions tab
   workflow_dispatch:
 
-  # on schedule (using cron syntax)
-  schedule:
-    - cron: "0 0 * * *" #< every day at 00:00 UTC
+  ### on schedule (using cron syntax)
+  ##schedule:
+  ##  - cron: "0 0 * * *" #< every day at 00:00 UTC
 
 jobs:
   update:
