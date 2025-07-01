@@ -97,7 +97,7 @@ jobs:
         git status
 
     - name: Commit any updates to the repo
-      uses: stefanzweifel/git-auto-commit-action@v5
+      uses: stefanzweifel/git-auto-commit-action@v6
       with:
         # GitHub will auto-link the upstream ref to the corresponding commit
         commit_message: Sync template with notepad-plus-plus/notepad-plus-plus@${{ steps.diff_step.outputs.HEAD_REF }}
