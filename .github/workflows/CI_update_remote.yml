@@ -21,10 +21,10 @@ jobs:
 
     steps:
     - name: Checkout plugintemplate repo
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Checkout N++ repo
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         repository: notepad-plus-plus/notepad-plus-plus
         path: npp_repo
