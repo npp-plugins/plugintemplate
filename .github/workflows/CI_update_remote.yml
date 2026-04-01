@@ -104,7 +104,7 @@ jobs:
 
     - name: If ANY_DIFFERENCE then add MSBuild to PATH
       if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: If ANY_DIFFERENCE then run MSBuild of plugin dll
       if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
