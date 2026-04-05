@@ -261,10 +261,10 @@ enum Platform { PF_UNKNOWN, PF_X86, PF_X64, PF_IA64, PF_ARM64 };
 	// Return TRUE
 
 	#define NPPM_DMMREGASDCKDLG (NPPMSG + 33)
-	// BOOL NPPM_DMMREGASDCKDLG(0, tTbData* pData)
+	// BOOL NPPM_DMMREGASDCKDLG(0, DockedWidgetData* pData)
 	// Pass the necessary dockingData to Notepad++ in order to make your dialog dockable.
 	// wParam: 0 (not used)
-	// lParam[in]: pData is the pointer of tTbData. Please check tTbData structure in "Docking.h"
+	// lParam[in]: pData is the pointer of DockedWidgetData (old name "tTbData"). Please check DockedWidgetData structure in "Docking.h"
 	//             Minimum information which needs to be filled out are hClient, pszName, dlgID, uMask and pszModuleName.
 	//             Notice that rcFloat and iPrevCont shouldn't be filled. They are used internally.
 	// Return TRUE
@@ -280,7 +280,7 @@ enum Platform { PF_UNKNOWN, PF_X86, PF_X64, PF_IA64, PF_ARM64 };
 	// BOOL WM_DMM_VIEWOTHERTAB(0, wchar_t* name)
 	// Show the plugin dialog (switch to plugin tab) with the given name.
 	// wParam: 0 (not used)
-	// lParam[in]: name should be the same value as previously used to register the dialog (pszName of tTbData)
+	// lParam[in]: name should be the same value as previously used to register the dialog (pszName of DockedWidgetData)
 	// Return TRUE
 
 	#define NPPM_RELOADFILE (NPPMSG + 36)
