@@ -47,7 +47,7 @@
 #define DWS_DF_FLOATING		0x80000000			// default state is floating
 
 
-struct tTbData {
+struct DockedWidgetData {                    // DockedWidget data (old name: tTbData)
 	HWND hClient = nullptr;                  // client Window Handle
 	const wchar_t* pszName = nullptr;        // name of plugin (shown in window)
 	int dlgID = 0;                           // a funcItem provides the function pointer to start a dialog. Please parse here these ID
