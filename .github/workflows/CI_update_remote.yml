@@ -117,7 +117,7 @@ jobs:
 
     - name: Release
       if: ${{steps.diff_step.outputs.ANY_DIFFERENCE}}
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         name: Plugin Template for Notepad++ release v${{ steps.diff_step.outputs.CHANGE_DATE }}.${{github.run_number}}.${{github.run_attempt}}
         tag_name: v${{ steps.diff_step.outputs.CHANGE_DATE }}.${{github.run_number}}.${{github.run_attempt}}
