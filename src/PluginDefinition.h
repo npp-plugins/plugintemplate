@@ -19,7 +19,7 @@
 #define PLUGINDEFINITION_H
 
 //
-// All difinitions of plugin interface
+// All definitions of plugin interface
 //
 #include "PluginInterface.h"
 
